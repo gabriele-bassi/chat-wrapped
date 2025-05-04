@@ -18,10 +18,14 @@ const Index = () => {
     setFileContent(content);
     
     try {
+      console.log("Prima riga del file:", content.split('\n')[0]);
+      
       // Simulate processing time for better UX
       await new Promise(resolve => setTimeout(resolve, 800));
       const chatAnalysis = analyzeChatFile(content);
       setAnalysis(chatAnalysis);
+      console.log("Analisi completata:", chatAnalysis);
+      
       toast({
         title: "Analisi completata",
         description: "I tuoi messaggi sono stati analizzati con successo",
