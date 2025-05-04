@@ -28,8 +28,8 @@ const TIME_PERIODS = {
   night: { start: 22, end: 6 }
 };
 
-// Emoji regex
-const EMOJI_REGEX = /[\p{Emoji}\u{1F3FB}-\u{1F3FF}\u{1F9B0}-\u{1F9B3}]/u;
+// Emoji regex - modificato con flag 'g' per renderlo globale
+const EMOJI_REGEX = /[\p{Emoji}\u{1F3FB}-\u{1F3FF}\u{1F9B0}-\u{1F9B3}]/gu;
 
 export const analyzeChatFile = (fileContent: string): ChatAnalysis => {
   const lines = fileContent.split('\n').filter(line => line.trim());
@@ -225,7 +225,8 @@ function parseDateTime(date: string, time: string, format: 'ios' | 'android'): D
   }
 }
 
-// Helper function to extract emojis from text
+// Helper function to extract emojis from text - corretto per usare matchAll con regex globale
 function extractEmojis(text: string): string[] {
-  return Array.from(text.matchAll(EMOJI_REGEX), m => m[0]);
+  const matches = Array.from(text.matchAll(EMOJI_REGEX));
+  return matches.map(match => match[0]);
 }

@@ -41,19 +41,19 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="py-6 px-4 border-b">
+      <header className="py-6 px-4">
         <div className="container">
-          <h1 className="text-3xl font-bold text-center text-primary tracking-tight">
+          <h1 className="text-4xl font-extrabold text-center text-white tracking-tight drop-shadow-md">
             ChatWrapped
           </h1>
-          <p className="text-center text-muted-foreground mt-2">
+          <p className="text-center text-white/90 mt-2 text-lg font-medium">
             Scopri le statistiche delle tue conversazioni
           </p>
         </div>
       </header>
 
       <main className="flex-1 py-12 px-4">
-        <div className="container">
+        <div className="container app-container p-6">
           {!fileContent ? (
             <div className="max-w-3xl mx-auto">
               <div className="text-center mb-12 animate-fade-in">
@@ -68,13 +68,13 @@ const Index = () => {
               <FileUploader onFileUpload={handleFileUpload} isLoading={isLoading} />
 
               <div className="mt-12 space-y-6 animate-fade-in">
-                <div className="border rounded-lg p-6 bg-muted/30">
+                <div className="glass-card rounded-lg p-6">
                   <h3 className="font-medium mb-2">Formati supportati:</h3>
                   <p className="text-muted-foreground text-sm">
-                    • WhatsApp: [25/07/24, 7:49:06 PM] Nonna Pinuccia: Ok 12/15 va bene. ciao
+                    • WhatsApp iOS: [25/07/24, 7:49:06 PM] Nonna Pinuccia: Ok 12/15 va bene. ciao
                   </p>
                   <p className="text-muted-foreground text-sm mt-1">
-                    • Telegram: 22/10/23, 15:20 - nico: Sto arrivando
+                    • WhatsApp Android: 22/10/23, 15:20 - nico: Sto arrivando
                   </p>
                 </div>
 
@@ -102,9 +102,9 @@ const Index = () => {
         </div>
       </main>
       
-      <footer className="py-4 border-t">
+      <footer className="py-4">
         <div className="container">
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-sm text-white/80">
             ChatWrapped - Ispirato da Spotify Wrapped. Creato con ❤️
           </p>
         </div>
