@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface FileUploaderProps {
   onFileUpload: (content: string) => void;
@@ -15,6 +16,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload, isLoading }) 
   const [fileName, setFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -69,25 +71,25 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload, isLoading }) 
   return (
     <div className="w-full max-w-md mx-auto animate-fade-in">
       <Card className="border-2 border-dashed rounded-lg">
-        <CardContent className="p-6">
+        <CardContent className={isMobile ? "p-4" : "p-6"}>
           <div
-            className={`flex flex-col items-center justify-center p-8 rounded-md transition-all duration-200 ${
+            className={`flex flex-col items-center justify-center p-4 md:p-8 rounded-md transition-all duration-200 ${
               isDragging ? "bg-accent" : ""
             }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            <div className="mb-4 p-4 bg-primary/10 rounded-full">
-              <Upload className="h-10 w-10 text-primary" />
+            <div className="mb-3 md:mb-4 p-3 md:p-4 bg-primary/10 rounded-full">
+              <Upload className="h-8 w-8 md:h-10 md:w-10 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">Carica il tuo file di chat</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              Trascina qui il tuo file .txt oppure clicca per selezionarlo
+            <h3 className="text-lg md:text-xl font-semibold mb-1 md:mb-2">Carica il tuo file di chat</h3>
+            <p className="text-sm md:text-base text-muted-foreground text-center mb-3 md:mb-4">
+              {isMobile ? "Seleziona il tuo file .txt" : "Trascina qui il tuo file .txt oppure clicca per selezionarlo"}
             </p>
             
             {fileName ? (
-              <div className="text-sm font-medium text-primary">{fileName}</div>
+              <div className="text-xs md:text-sm font-medium text-primary overflow-hidden text-ellipsis max-w-full">{fileName}</div>
             ) : null}
 
             <input
@@ -101,7 +103,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload, isLoading }) 
             
             <Button 
               onClick={triggerFileInput} 
-              className="mt-4"
+              className="mt-3 md:mt-4"
+              size={isMobile ? "sm" : "default"}
               disabled={isLoading}
             >
               Seleziona File
@@ -111,7 +114,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileUpload, isLoading }) 
       </Card>
 
       {fileName && (
-        <div className="mt-4 text-center text-sm text-muted-foreground">
+        <div className="mt-3 md:mt-4 text-center text-xs md:text-sm text-muted-foreground">
           <p>File caricato: <span className="font-medium">{fileName}</span></p>
         </div>
       )}

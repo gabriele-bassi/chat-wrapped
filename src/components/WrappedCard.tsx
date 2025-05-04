@@ -2,8 +2,9 @@
 import React, { useRef, useState } from "react";
 import { ChatAnalysis } from "@/utils/chatAnalyzer";
 import { Button } from "@/components/ui/button";
-import { Download, Instagram } from "lucide-react";
+import { Download, ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import html2canvas from "html2canvas";
 
 interface WrappedCardProps {
@@ -15,6 +16,7 @@ const WrappedCard: React.FC<WrappedCardProps> = ({ analysis, onBack }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [cardTheme, setCardTheme] = useState<string>("purple");
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   
   const formatResponseTime = (seconds: number): string => {
     if (seconds < 60) {
@@ -94,63 +96,65 @@ const WrappedCard: React.FC<WrappedCardProps> = ({ analysis, onBack }) => {
   const users = getMostFrequentUsers();
   const mostActiveUser = users.length ? users[0] : "nessuno";
   const secondMostActiveUser = users.length > 1 ? users[1] : "";
+
+  const phoneSize = isMobile ? "w-full h-auto min-h-[70vh]" : "w-[375px] h-[812px]";
   
   return (
-    <div className="w-full max-w-md mx-auto animate-fade-in">
-      <div className="mb-8 text-center">
-        <h2 className="text-3xl font-bold text-primary mb-2">La tua ChatWrapped</h2>
-        <p className="text-muted-foreground">
+    <div className="w-full px-4 max-w-md mx-auto animate-fade-in">
+      <div className="mb-6 md:mb-8 text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2">La tua ChatWrapped</h2>
+        <p className="text-sm md:text-base text-muted-foreground">
           Scaricala e condividila sui social media!
         </p>
       </div>
       
-      <div className="mb-6 flex flex-wrap justify-center gap-3">
+      <div className="mb-4 md:mb-6 flex flex-wrap justify-center gap-2 md:gap-3">
         <Button
           variant={cardTheme === "purple" ? "default" : "outline"}
           onClick={() => setCardTheme("purple")}
-          className="bg-gradient-purple text-white border-none hover:opacity-90"
+          className="bg-gradient-purple text-white border-none hover:opacity-90 text-xs md:text-sm px-3"
         >
           Viola
         </Button>
         <Button
           variant={cardTheme === "green" ? "default" : "outline"}
           onClick={() => setCardTheme("green")}
-          className="bg-gradient-green text-white border-none hover:opacity-90"
+          className="bg-gradient-green text-white border-none hover:opacity-90 text-xs md:text-sm px-3"
         >
           Verde
         </Button>
         <Button
           variant={cardTheme === "pink" ? "default" : "outline"}
           onClick={() => setCardTheme("pink")}
-          className="bg-gradient-pink text-white border-none hover:opacity-90"
+          className="bg-gradient-pink text-white border-none hover:opacity-90 text-xs md:text-sm px-3"
         >
           Rosa
         </Button>
         <Button
           variant={cardTheme === "blue" ? "default" : "outline"}
           onClick={() => setCardTheme("blue")}
-          className="bg-gradient-blue text-white border-none hover:opacity-90"
+          className="bg-gradient-blue text-white border-none hover:opacity-90 text-xs md:text-sm px-3"
         >
           Blu
         </Button>
       </div>
       
-      <div className="phone-mockup">
+      <div className={`phone-mockup mx-auto ${phoneSize}`}>
         <div
           ref={cardRef}
           className={`wrapped-card text-white ${getCardClass()}`}
         >
           <div className="mb-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-black mb-2">ChatWrapped</h1>
-              <p className="text-sm opacity-70">Il tuo anno in chat</p>
+            <div className="text-center mb-8 md:mb-12">
+              <h1 className="text-3xl md:text-4xl font-black mb-1 md:mb-2">ChatWrapped</h1>
+              <p className="text-xs md:text-sm opacity-70">Il tuo anno in chat</p>
             </div>
             
-            <div className="stat-highlight">
+            <div className="stat-highlight text-base md:text-xl">
               Hai scambiato <span className="text-yellow-200 font-black">{analysis.totalMessages}</span> messaggi
             </div>
             
-            <div className="stat-highlight">
+            <div className="stat-highlight text-base md:text-xl">
               {secondMostActiveUser ? (
                 <>
                   Tu e <span className="text-yellow-200 font-black">{mostActiveUser}</span> avete chattato come non ci fosse un domani
@@ -162,39 +166,40 @@ const WrappedCard: React.FC<WrappedCardProps> = ({ analysis, onBack }) => {
               )}
             </div>
             
-            <div className="stat-highlight">
+            <div className="stat-highlight text-base md:text-xl">
               La tua parola preferita è stata <span className="text-yellow-200 font-black">"{analysis.mostUsedWord.word}"</span>
-              <div className="text-base font-normal opacity-70">
+              <div className="text-sm md:text-base font-normal opacity-70">
                 L'hai usata {analysis.mostUsedWord.count} volte
               </div>
             </div>
             
             {analysis.mostUsedEmoji.emoji && (
-              <div className="stat-highlight">
-                La tua emoji del cuore <span className="text-3xl">{analysis.mostUsedEmoji.emoji}</span>
+              <div className="stat-highlight text-base md:text-xl">
+                La tua emoji del cuore <span className="text-2xl md:text-3xl">{analysis.mostUsedEmoji.emoji}</span>
               </div>
             )}
             
-            <div className="stat-highlight">
+            <div className="stat-highlight text-base md:text-xl">
               Ami chattare di <span className="text-yellow-200 font-black">{getTimeOfDayStats()}</span>
             </div>
             
-            <div className="stat-highlight">
+            <div className="stat-highlight text-base md:text-xl">
               Rispondi in media in <span className="text-yellow-200 font-black">{formatResponseTime(analysis.averageResponseTime)}</span>
             </div>
           </div>
             
-          <div className="text-center text-sm opacity-70 mt-6">
+          <div className="text-center text-xs md:text-sm opacity-70 mt-4 md:mt-6">
             Generato con ChatWrapped
           </div>
         </div>
       </div>
       
-      <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-        <Button onClick={onBack} variant="outline">
-          Torna alle statistiche
+      <div className="mt-6 md:mt-8 flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
+        <Button onClick={onBack} variant="outline" size={isMobile ? "sm" : "default"} className="flex items-center gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Statistiche
         </Button>
-        <Button onClick={downloadCard} className="gap-2">
+        <Button onClick={downloadCard} className="gap-2" size={isMobile ? "sm" : "default"}>
           <Download className="h-4 w-4" />
           Scarica Card
         </Button>

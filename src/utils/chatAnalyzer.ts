@@ -1,4 +1,3 @@
-
 // Types for chat analysis
 export interface ChatAnalysis {
   totalMessages: number;
@@ -18,6 +17,7 @@ export interface ChatAnalysis {
 
 // Regular expressions for different chat formats
 const WHATSAPP_IOS_REGEX = /\[(\d{2}\/\d{2}\/\d{2,4}),\s*(\d{1,2}:\d{2}:\d{2}\s*[AP]M)\]\s*([^:]+):\s*(.*)/;
+// Updated Android regex pattern to be more flexible with spaces and timestamps
 const WHATSAPP_ANDROID_REGEX = /(\d{2}\/\d{2}\/\d{2,4}),\s*(\d{1,2}:\d{2})(?:\s*-\s*)([^:]+):\s*(.*)/;
 
 // Time of day periods
@@ -36,7 +36,10 @@ export const analyzeChatFile = (fileContent: string): ChatAnalysis => {
   
   // Detect which format we're dealing with
   const format = detectChatFormat(lines[0]);
+  console.log("Detected format:", format);
+  
   if (!format) {
+    console.error("Format detection failed for line:", lines[0]);
     throw new Error("Formato chat non riconosciuto");
   }
   
@@ -64,14 +67,20 @@ export const analyzeChatFile = (fileContent: string): ChatAnalysis => {
   // Process each line
   for (const line of lines) {
     const match = line.match(regex);
-    if (!match) continue;
+    if (!match) {
+      console.log("No match for line:", line);
+      continue;
+    }
     
     const [, date, time, username, message] = match;
     const cleanUsername = username.trim();
     
     // Parse date and time
     const timestamp = parseDateTime(date, time, format);
-    if (!timestamp) continue;
+    if (!timestamp) {
+      console.log("Failed to parse datetime:", date, time);
+      continue;
+    }
     
     // Initialize user stats if not exists
     if (!analysis.userStats[cleanUsername]) {
@@ -170,8 +179,15 @@ export const analyzeChatFile = (fileContent: string): ChatAnalysis => {
 
 // Helper function to detect chat format
 function detectChatFormat(line: string): 'ios' | 'android' | null {
-  if (WHATSAPP_IOS_REGEX.test(line)) return 'ios';
-  if (WHATSAPP_ANDROID_REGEX.test(line)) return 'android';
+  if (WHATSAPP_IOS_REGEX.test(line)) {
+    console.log("iOS format detected");
+    return 'ios';
+  }
+  if (WHATSAPP_ANDROID_REGEX.test(line)) {
+    console.log("Android format detected");
+    return 'android';
+  }
+  console.log("Format detection failed for line:", line);
   return null;
 }
 
