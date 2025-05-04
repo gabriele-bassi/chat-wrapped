@@ -16,16 +16,16 @@ const Index = () => {
   const handleFileUpload = async (content: string) => {
     setIsLoading(true);
     setFileContent(content);
-    
+
     try {
       console.log("Prima riga del file:", content.split('\n')[0]);
-      
+
       // Simulate processing time for better UX
       await new Promise(resolve => setTimeout(resolve, 800));
       const chatAnalysis = analyzeChatFile(content);
       setAnalysis(chatAnalysis);
       console.log("Analisi completata:", chatAnalysis);
-      
+
       toast({
         title: "Analisi completata",
         description: "I tuoi messaggi sono stati analizzati con successo",
@@ -72,16 +72,6 @@ const Index = () => {
               <FileUploader onFileUpload={handleFileUpload} isLoading={isLoading} />
 
               <div className="mt-8 md:mt-12 space-y-4 md:space-y-6 animate-fade-in">
-                <div className="glass-card rounded-lg p-4 md:p-6">
-                  <h3 className="font-medium mb-2">Formati supportati:</h3>
-                  <p className="text-muted-foreground text-xs md:text-sm">
-                    • WhatsApp iOS: [25/07/24, 7:49:06 PM] Nonna Pinuccia: Ok 12/15 va bene. ciao
-                  </p>
-                  <p className="text-muted-foreground text-xs md:text-sm mt-1">
-                    • WhatsApp Android: 22/10/23, 15:20 - nico: Sto arrivando
-                  </p>
-                </div>
-
                 <div className="text-xs md:text-sm text-muted-foreground text-center">
                   <p>I tuoi dati rimangono sul tuo computer, nessun dato viene inviato a server esterni.</p>
                 </div>
@@ -93,19 +83,19 @@ const Index = () => {
               <p className="text-sm md:text-base text-muted-foreground">Analisi in corso...</p>
             </div>
           ) : showCard && analysis ? (
-            <WrappedCard 
-              analysis={analysis} 
+            <WrappedCard
+              analysis={analysis}
               onBack={() => setShowCard(false)}
             />
           ) : analysis ? (
-            <ChatStats 
-              analysis={analysis} 
+            <ChatStats
+              analysis={analysis}
               onGenerateCard={() => setShowCard(true)}
             />
           ) : null}
         </div>
       </main>
-      
+
       <footer className="py-3 md:py-4">
         <div className="container">
           <p className="text-center text-xs md:text-sm text-white/80">
