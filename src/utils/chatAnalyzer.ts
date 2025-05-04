@@ -17,8 +17,8 @@ export interface ChatAnalysis {
 }
 
 // Regular expressions for different chat formats
-const WHATSAPP_REGEX = /\[?(\d{2}\/\d{2}\/\d{2,4}),\s*(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)\]?\s*-?\s*([^:]+):\s*(.*)/;
-const TELEGRAM_REGEX = /\[?(\d{2}\/\d{2}\/\d{2,4}),\s*(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)\]?\s*([^:]+):\s*(.*)/;
+const WHATSAPP_IOS_REGEX = /\[(\d{2}\/\d{2}\/\d{2,4}),\s*(\d{1,2}:\d{2}:\d{2}\s*[AP]M)\]\s*([^:]+):\s*(.*)/;
+const WHATSAPP_ANDROID_REGEX = /(\d{2}\/\d{2}\/\d{2,4}),\s*(\d{1,2}:\d{2})(?:\s*-\s*)([^:]+):\s*(.*)/;
 
 // Time of day periods
 const TIME_PERIODS = {
@@ -40,7 +40,7 @@ export const analyzeChatFile = (fileContent: string): ChatAnalysis => {
     throw new Error("Formato chat non riconosciuto");
   }
   
-  const regex = format === 'whatsapp' ? WHATSAPP_REGEX : TELEGRAM_REGEX;
+  const regex = format === 'ios' ? WHATSAPP_IOS_REGEX : WHATSAPP_ANDROID_REGEX;
   
   // Initialize analysis object
   const analysis: ChatAnalysis = {
@@ -70,7 +70,7 @@ export const analyzeChatFile = (fileContent: string): ChatAnalysis => {
     const cleanUsername = username.trim();
     
     // Parse date and time
-    const timestamp = parseDateTime(date, time);
+    const timestamp = parseDateTime(date, time, format);
     if (!timestamp) continue;
     
     // Initialize user stats if not exists
@@ -169,14 +169,14 @@ export const analyzeChatFile = (fileContent: string): ChatAnalysis => {
 };
 
 // Helper function to detect chat format
-function detectChatFormat(line: string): 'whatsapp' | 'telegram' | null {
-  if (WHATSAPP_REGEX.test(line)) return 'whatsapp';
-  if (TELEGRAM_REGEX.test(line)) return 'telegram';
+function detectChatFormat(line: string): 'ios' | 'android' | null {
+  if (WHATSAPP_IOS_REGEX.test(line)) return 'ios';
+  if (WHATSAPP_ANDROID_REGEX.test(line)) return 'android';
   return null;
 }
 
 // Helper function to parse date and time
-function parseDateTime(date: string, time: string): Date | null {
+function parseDateTime(date: string, time: string, format: 'ios' | 'android'): Date | null {
   try {
     // Handle different date formats
     const [day, month, yearOrDay] = date.split('/');
@@ -197,20 +197,30 @@ function parseDateTime(date: string, time: string): Date | null {
     }
     
     // Handle different time formats
-    const timeParts = time.trim().match(/(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\s*([AP]M))?/);
-    if (!timeParts) return null;
+    let hour, minute, second = 0;
     
-    let [, hours, minutes, seconds = '0', ampm] = timeParts;
-    let hour = parseInt(hours);
-    
-    // Convert to 24-hour format if needed
-    if (ampm) {
-      if (ampm.toUpperCase() === 'PM' && hour < 12) hour += 12;
-      if (ampm.toUpperCase() === 'AM' && hour === 12) hour = 0;
+    if (format === 'ios') {
+      // iOS format: 7:49:06 PM
+      const timeParts = time.trim().match(/(\d{1,2}):(\d{2}):(\d{2})\s*([AP]M)/i);
+      if (!timeParts) return null;
+      
+      [, hour, minute, second] = timeParts.map(part => parseInt(part) || 0);
+      const ampm = timeParts[4].toUpperCase();
+      
+      // Convert to 24-hour format
+      if (ampm === 'PM' && hour < 12) hour += 12;
+      if (ampm === 'AM' && hour === 12) hour = 0;
+    } else {
+      // Android format: 15:20
+      const timeParts = time.trim().match(/(\d{1,2}):(\d{2})/);
+      if (!timeParts) return null;
+      
+      [, hour, minute] = timeParts.map(part => parseInt(part) || 0);
     }
     
-    return new Date(year, month2, day2, hour, parseInt(minutes), parseInt(seconds));
+    return new Date(year, month2, day2, hour, minute, second);
   } catch (error) {
+    console.log('Parse date time error:', error);
     return null;
   }
 }
