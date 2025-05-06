@@ -65,8 +65,34 @@ const Index = () => {
                   Scopri l' <span className="text-primary">MVP</span> della tua chat
                 </h2>
                 <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8">
-
+                  
                 </p>
+                
+                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 md:p-6 mb-6 shadow-md border border-white/30">
+                  <h3 className="font-semibold text-lg mb-2 text-primary">Come ottenere il file da WhatsApp?</h3>
+                  <ol className="text-left space-y-2 text-sm md:text-base">
+                    <li className="flex items-start">
+                      <span className="font-semibold mr-2">1.</span>
+                      <span>Apri la chat che vuoi analizzare su WhatsApp</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold mr-2">2.</span>
+                      <span>Su Android clicca sui 3 puntini in alto a destra e cerca esporta chat</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold mr-2">3.</span>
+                      <span>Su iPhone clicca sul nome del contatto in alto, scendi e cerca esporta chat</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold mr-2">4.</span>
+                      <span>Clicca su esporta chat e poi senza media</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="font-semibold mr-2">5.</span>
+                      <span>Salva il file sul tuo telefono e caricalo su ChatWrapped</span>
+                    </li>
+                  </ol>
+                </div>
               </div>
 
               <FileUploader onFileUpload={handleFileUpload} isLoading={isLoading} />

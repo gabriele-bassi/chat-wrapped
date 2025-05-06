@@ -2,7 +2,7 @@
 import React, { useRef, useState } from "react";
 import { ChatAnalysis } from "@/utils/chatAnalyzer";
 import { Button } from "@/components/ui/button";
-import { Download, ArrowLeft } from "lucide-react";
+import { Download, ArrowLeft, Heart, Star, MessageSquare, Calendar } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import html2canvas from "html2canvas";
@@ -48,6 +48,26 @@ const WrappedCard: React.FC<WrappedCardProps> = ({ analysis, onBack }) => {
     return Object.entries(analysis.userStats)
       .sort(([, a], [, b]) => b.messageCount - a.messageCount)
       .map(([name]) => name);
+  };
+  
+  const getMostActiveDay = () => {
+    if (!analysis.dayWithMostMessages.date) return "";
+    
+    const date = new Date(analysis.dayWithMostMessages.date);
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('it-IT', options);
+  };
+  
+  const getTotalWords = () => {
+    return Object.values(analysis.userStats).reduce(
+      (sum, user) => sum + user.wordCount, 0
+    );
+  };
+  
+  const getTotalEmojis = () => {
+    return Object.values(analysis.userStats).reduce(
+      (sum, user) => sum + user.emojiCount, 0
+    );
   };
 
   const downloadCard = async () => {
@@ -97,7 +117,8 @@ const WrappedCard: React.FC<WrappedCardProps> = ({ analysis, onBack }) => {
   const mostActiveUser = users.length ? users[0] : "nessuno";
   const secondMostActiveUser = users.length > 1 ? users[1] : "";
 
-  const phoneSize = isMobile ? "w-full h-auto min-h-[70vh]" : "w-[375px] h-[812px]";
+  // Make sure card is always responsive and fits well on mobile
+  const phoneSize = "w-full h-auto min-h-[70vh] max-w-md";
   
   return (
     <div className="w-full px-4 max-w-md mx-auto animate-fade-in">
@@ -145,46 +166,88 @@ const WrappedCard: React.FC<WrappedCardProps> = ({ analysis, onBack }) => {
           className={`wrapped-card text-white ${getCardClass()}`}
         >
           <div className="mb-auto">
-            <div className="text-center mb-8 md:mb-12">
+            <div className="text-center mb-6 md:mb-8">
               <h1 className="text-3xl md:text-4xl font-black mb-1 md:mb-2">ChatWrapped</h1>
               <p className="text-xs md:text-sm opacity-70">Il tuo anno in chat</p>
             </div>
             
-            <div className="stat-highlight text-base md:text-xl">
-              Hai scambiato <span className="text-yellow-200 font-black">{analysis.totalMessages}</span> messaggi
-            </div>
-            
-            <div className="stat-highlight text-base md:text-xl">
-              {secondMostActiveUser ? (
-                <>
-                  Tu e <span className="text-yellow-200 font-black">{mostActiveUser}</span> avete chattato come non ci fosse un domani
-                </>
-              ) : (
-                <>
-                  <span className="text-yellow-200 font-black">{mostActiveUser}</span> è stato il più attivo nella chat
-                </>
+            {/* Stats with icons */}
+            <div className="space-y-5 md:space-y-6">
+              <div className="stat-highlight flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0 text-yellow-200" />
+                <span>
+                  Hai scambiato <span className="text-yellow-200 font-black">{analysis.totalMessages}</span> messaggi
+                </span>
+              </div>
+              
+              <div className="stat-highlight flex items-center gap-2">
+                <Star className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0 text-yellow-200" />
+                {secondMostActiveUser ? (
+                  <span>
+                    Tu e <span className="text-yellow-200 font-black">{mostActiveUser}</span> avete chattato come non ci fosse un domani
+                  </span>
+                ) : (
+                  <span>
+                    <span className="text-yellow-200 font-black">{mostActiveUser}</span> è stato il più attivo nella chat
+                  </span>
+                )}
+              </div>
+              
+              <div className="stat-highlight flex items-center gap-2">
+                <Heart className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0 text-yellow-200" />
+                <span>
+                  La tua parola preferita è stata <span className="text-yellow-200 font-black">"{analysis.mostUsedWord.word}"</span>
+                  <div className="text-sm md:text-base font-normal opacity-70">
+                    L'hai usata {analysis.mostUsedWord.count} volte
+                  </div>
+                </span>
+              </div>
+              
+              {analysis.mostUsedEmoji.emoji && (
+                <div className="stat-highlight flex items-center gap-2">
+                  <span className="text-2xl md:text-3xl">{analysis.mostUsedEmoji.emoji}</span>
+                  <span>
+                    La tua emoji preferita
+                    <div className="text-sm md:text-base font-normal opacity-70">
+                      Usata {analysis.mostUsedEmoji.count} volte
+                    </div>
+                  </span>
+                </div>
               )}
-            </div>
-            
-            <div className="stat-highlight text-base md:text-xl">
-              La tua parola preferita è stata <span className="text-yellow-200 font-black">"{analysis.mostUsedWord.word}"</span>
-              <div className="text-sm md:text-base font-normal opacity-70">
-                L'hai usata {analysis.mostUsedWord.count} volte
+              
+              <div className="stat-highlight flex items-center gap-2">
+                <Calendar className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0 text-yellow-200" />
+                <span>
+                  Ami chattare di <span className="text-yellow-200 font-black">{getTimeOfDayStats()}</span>
+                </span>
               </div>
-            </div>
-            
-            {analysis.mostUsedEmoji.emoji && (
-              <div className="stat-highlight text-base md:text-xl">
-                La tua emoji del cuore <span className="text-2xl md:text-3xl">{analysis.mostUsedEmoji.emoji}</span>
+              
+              <div className="stat-highlight">
+                Rispondi in media in <span className="text-yellow-200 font-black">{formatResponseTime(analysis.averageResponseTime)}</span>
               </div>
-            )}
-            
-            <div className="stat-highlight text-base md:text-xl">
-              Ami chattare di <span className="text-yellow-200 font-black">{getTimeOfDayStats()}</span>
-            </div>
-            
-            <div className="stat-highlight text-base md:text-xl">
-              Rispondi in media in <span className="text-yellow-200 font-black">{formatResponseTime(analysis.averageResponseTime)}</span>
+              
+              {/* Additional statistics */}
+              <div className="stat-highlight">
+                Hai scritto un totale di <span className="text-yellow-200 font-black">{getTotalWords()}</span> parole
+              </div>
+              
+              {getTotalEmojis() > 0 && (
+                <div className="stat-highlight">
+                  Hai usato <span className="text-yellow-200 font-black">{getTotalEmojis()}</span> emoji
+                </div>
+              )}
+              
+              {analysis.mediaCount > 0 && (
+                <div className="stat-highlight">
+                  Hai condiviso <span className="text-yellow-200 font-black">{analysis.mediaCount}</span> media
+                </div>
+              )}
+              
+              {getMostActiveDay() && (
+                <div className="stat-highlight">
+                  Il giorno più attivo è stato <span className="text-yellow-200 font-black">{getMostActiveDay()}</span>
+                </div>
+              )}
             </div>
           </div>
             
