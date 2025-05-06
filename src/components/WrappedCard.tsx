@@ -1,11 +1,11 @@
-
 import React, { useRef, useState } from "react";
 import { ChatAnalysis } from "@/utils/chatAnalyzer";
 import { Button } from "@/components/ui/button";
-import { Download, ArrowLeft, Heart, Star, MessageSquare, Calendar } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { ArrowLeft, Heart, Star, MessageSquare, Calendar } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import html2canvas from "html2canvas";
+import RewardedAd from "@/components/RewardedAd";
 
 interface WrappedCardProps {
   analysis: ChatAnalysis;
@@ -122,6 +122,7 @@ const WrappedCard: React.FC<WrappedCardProps> = ({ analysis, onBack }) => {
   
   return (
     <div className="w-full px-4 max-w-md mx-auto animate-fade-in">
+      
       <div className="mb-6 md:mb-8 text-center">
         <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2">La tua ChatWrapped</h2>
         <p className="text-sm md:text-base text-muted-foreground">
@@ -161,6 +162,7 @@ const WrappedCard: React.FC<WrappedCardProps> = ({ analysis, onBack }) => {
       </div>
       
       <div className={`phone-mockup mx-auto ${phoneSize}`}>
+        
         <div
           ref={cardRef}
           className={`wrapped-card text-white ${getCardClass()}`}
@@ -262,10 +264,13 @@ const WrappedCard: React.FC<WrappedCardProps> = ({ analysis, onBack }) => {
           <ArrowLeft className="h-4 w-4" />
           Statistiche
         </Button>
-        <Button onClick={downloadCard} className="gap-2" size={isMobile ? "sm" : "default"}>
-          <Download className="h-4 w-4" />
-          Scarica Card
-        </Button>
+        
+        {/* Sostituiamo il pulsante di download con RewardedAd */}
+        <RewardedAd 
+          onAdCompleted={downloadCard} 
+          buttonText="Scarica Card" 
+          size={isMobile ? "sm" : "default"}
+        />
       </div>
     </div>
   );

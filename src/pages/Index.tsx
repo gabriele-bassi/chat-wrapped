@@ -1,11 +1,12 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FileUploader from "@/components/FileUploader";
 import { analyzeChatFile, ChatAnalysis } from "@/utils/chatAnalyzer";
 import ChatStats from "@/components/ChatStats";
 import WrappedCard from "@/components/WrappedCard";
 import { useToast } from "@/components/ui/use-toast";
 import { Github, Copyright, Info } from "lucide-react";
+import AdBanner from "@/components/AdBanner";
 
 const Index = () => {
   const [fileContent, setFileContent] = useState<string | null>(null);
@@ -14,6 +15,21 @@ const Index = () => {
   const [showCard, setShowCard] = useState<boolean>(false);
   const { toast } = useToast();
   const currentYear = new Date().getFullYear();
+
+  // Aggiungiamo lo script di Google AdSense al caricamento della pagina
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX';
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    document.head.appendChild(script);
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, []);
 
   const handleFileUpload = async (content: string) => {
     setIsLoading(true);
@@ -123,6 +139,11 @@ const Index = () => {
           ) : null}
         </div>
       </main>
+
+      {/* Banner pubblicitario prima del footer */}
+      <div className="container mx-auto px-4 my-6">
+        <AdBanner adSlot="1234567890" adFormat="horizontal" className="max-w-4xl mx-auto" />
+      </div>
 
       <footer className="py-6 md:py-8 px-4 mt-auto">
         <div className="container max-w-4xl mx-auto">
