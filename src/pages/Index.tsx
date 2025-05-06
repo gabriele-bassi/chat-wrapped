@@ -62,10 +62,10 @@ const Index = () => {
             <div className="max-w-3xl mx-auto">
               <div className="text-center mb-8 md:mb-12 animate-fade-in">
                 <h2 className="text-3xl md:text-4xl font-extrabold mb-3 md:mb-4 tracking-tight">
-                  La tua chat, <span className="text-primary">visualizzata.</span>
+                  Scopri l' <span className="text-primary">MVP</span> della tua chat
                 </h2>
                 <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8">
-                  Carica un file di chat e scopri statistiche interessanti sulla tua conversazione.
+
                 </p>
               </div>
 
@@ -99,7 +99,7 @@ const Index = () => {
       <footer className="py-3 md:py-4">
         <div className="container">
           <p className="text-center text-xs md:text-sm text-white/80">
-            ChatWrapped - Ispirato da Spotify Wrapped. Creato con ❤️
+            ChatWrapped
           </p>
         </div>
       </footer>
