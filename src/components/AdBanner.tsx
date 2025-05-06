@@ -12,7 +12,8 @@ const AdBanner: React.FC<AdBannerProps> = ({
   adFormat = 'auto',
   className = '' 
 }) => {
-  const adRef = useRef<HTMLDivElement>(null);
+  // Fix: Change the ref type to Element instead of HTMLDivElement
+  const adRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     // Solo se Google AdSense è caricato e siamo in produzione
